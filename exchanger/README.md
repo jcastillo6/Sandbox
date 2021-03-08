@@ -1,25 +1,21 @@
-exchanger: Assortment of technologies including Arquillian
+Exchanger: Assortment of technologies including Arquillian
 ========================
-Author: Pete Muir
+Author: Jorge Castillo 
 Level: Intermediate
 Technologies: CDI, JSF, JPA, EJB, JPA, JAX-RS, BV
-Summary: An example that incorporates multiple technologies
+Summary: Exchanger Application
 Target Project: WildFly
 Source: <https://github.com/wildfly/quickstart/>
 
 What is it?
 -----------
 
-This is your project! It is a sample, deployable Maven 3 project to help you get your foot in the door developing with Java EE 7 on JBoss WildFly.
-
-This project is setup to allow you to create a compliant Java EE 7 application using JSF 2.2, CDI 1.1, EJB 3.3, JPA 2.1 and Bean Validation 1.1. It includes a persistence unit and some sample persistence and transaction code to introduce you to database access in enterprise Java.
-
-There is a tutorial for this quickstart in the [Getting Started Developing Applications Guide](https://github.com/wildfly/quickstart/guide/exchanger/).
+This project allows to an amount from one currency to another, it purpose is for testing some new technologies
 
 System requirements
 -------------------
 
-All you need to build this project is Java 7.0 (Java SDK 1.7) or better, Maven 3.1 or better.
+All you need to build this project is Java 8.0 (Java SDK 1.8) or better, Maven 3.1 or better.
 
 The application this project produces is designed to be run on JBoss WildFly.
 
