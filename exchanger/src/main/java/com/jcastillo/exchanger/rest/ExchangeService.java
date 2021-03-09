@@ -1,6 +1,9 @@
 package com.jcastillo.exchanger.rest;
 
 import java.math.BigDecimal;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,6 +15,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -39,10 +44,12 @@ public class ExchangeService {
 	private static final Logger log = Logger.getLogger(ExchangeService.class.getName());
 	private static final Integer DEFAULT_SCALE = 4;
 	private static final String NOT_FOUND = "Conversion rate doesnt exist";
+	private static final String UPDATED_RATES = " Rates updated";
 	// the default cache time for https://api.exchangeratesapi.io/latest is 604800, i used the half
 	private static final Integer CACHE_TIME = 604800/2;
 	@Inject
 	private CurrencyManagementLocal currencyManagement;
+	private final ExecutorService exServ = Executors.newCachedThreadPool();
 	
 	
 	@ApiOperation(value = "Exchange",notes ="Currency convertor, you need to pass three input fields, currency from, currency to and the monetary value" ,response=Exchange.class )
@@ -79,6 +86,38 @@ public class ExchangeService {
 		
 		
 	}
+	
+	@Path("updaterates")
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	public void updateRates(@Suspended final AsyncResponse async ) {
+		
+		async.setTimeout(10, TimeUnit.SECONDS);
+		
+		Runnable updaterTask = new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					currencyManagement.updateRates();
+				} catch (CurrencyExchangeException e) {
+					log.log(Level.SEVERE,"failed to process, update rates");
+
+				}
+				
+				async.resume(Response.ok().entity(UPDATED_RATES).build());
+				
+			}
+		};
+		
+		exServ.execute(updaterTask);
+		
+		
+	}
+	
+	
+	
+	
 	
 
 }
