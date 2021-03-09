@@ -65,7 +65,7 @@ public class ExchangeService {
 
 		} catch (CurrencyExchangeException e) {
 			log.log(Level.INFO,"Rate not found");
-			return Response.status(Response.Status.NOT_FOUND).entity(NOT_FOUND).build();
+			return Response.status(Response.Status.NOT_FOUND).entity(NOT_FOUND).type(MediaType.TEXT_PLAIN).build();
 						
 		}
 				 
