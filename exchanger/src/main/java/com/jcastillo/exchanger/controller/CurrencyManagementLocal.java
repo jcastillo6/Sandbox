@@ -47,5 +47,12 @@ public interface CurrencyManagementLocal {
 	 * @return converted amount Big decimal
 	 * @throws CurrencyExchangeException CurrencyExchangeException if no currency rate is found
 	 */
-	BigDecimal convertToCurrencyByIsoCode(@NotNull String currencyFrom,@NotNull String currencyTo, @NotNull BigDecimal amt, Integer scale) throws CurrencyExchangeException;	
+	BigDecimal convertToCurrencyByIsoCode(@NotNull String currencyFrom,@NotNull String currencyTo, @NotNull BigDecimal amt, Integer scale) throws CurrencyExchangeException;
+	
+	/**
+	 * Call the execution of the background process that update the rates
+	 * @throws CurrencyExchangeException
+	 */
+	void updateRates() throws CurrencyExchangeException;
+
 }

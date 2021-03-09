@@ -87,6 +87,16 @@ public class CurrencyManagement implements CurrencyManagementLocal {
 		return amtResult.setScale((scale!=null)?scale:DEFAULT_SCALE,RoundingMode.HALF_UP );
 	}
 
+	@Override
+	public void updateRates() throws CurrencyExchangeException {
+		log.log(Level.INFO,"Calling updater");
+		exUpdater.scheduledTimeoutUpdater();
+		
+	}
+	
+	
+	
+
 
 
 
