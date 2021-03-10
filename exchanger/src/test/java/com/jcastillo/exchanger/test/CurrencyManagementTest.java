@@ -79,13 +79,13 @@ public class CurrencyManagementTest {
 	@Test
 	public void convertToCurrencyByIsoCode() throws CurrencyExchangeException{
 		log.log(Level.INFO,"executing convertToCurrencyByIsoCode");
-		BigDecimal amt = cm.convertToCurrencyByIsoCode("EUR", "USD", new BigDecimal(2000), 4);
+		BigDecimal amt = cm.convertToCurrencyByIsoCode("EUR", "USD", new BigDecimal(2000), 4).getResult();
 		System.out.printf("Amt %.2f : 2000 Euro to USD \n",amt);
-		 amt = cm.convertToCurrencyByIsoCode("USD", "EUR", new BigDecimal(2000), 4);
+		 amt = cm.convertToCurrencyByIsoCode("USD", "EUR", new BigDecimal(2000), 4).getResult();
 		System.out.printf("Amt %.2f : 2000 USD to EUR \n",amt);
-		 amt = cm.convertToCurrencyByIsoCode("ZAR", "EUR", new BigDecimal(2000), 4);
+		 amt = cm.convertToCurrencyByIsoCode("ZAR", "EUR", new BigDecimal(2000), 4).getResult();
 		System.out.printf("Amt %.2f : 2000 ZAR to EUR \n",amt);
-		 amt = cm.convertToCurrencyByIsoCode("EUR", "ZAR", new BigDecimal(2000), 4);
+		 amt = cm.convertToCurrencyByIsoCode("EUR", "ZAR", new BigDecimal(2000), 4).getResult();
 		System.out.printf("Amt %.2f: 2000 EUR to ZAR \n",amt);
 		assertTrue(amt.compareTo(new BigDecimal(0))>0);		
 		
