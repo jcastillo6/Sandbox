@@ -18,15 +18,15 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-
 import org.hibernate.validator.constraints.NotEmpty;
-
 import com.jcastillo.exchanger.controller.CurrencyExchangeException;
 import com.jcastillo.exchanger.controller.CurrencyManagementLocal;
-
+import com.jcastillo.exchanger.controller.Exchange;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -59,15 +59,15 @@ public class ExchangeService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response exchangeRate(@NotEmpty(message = "Invalid currency from ") @QueryParam("currencyfrom") String currencyFrom ,
 			@NotEmpty(message = "Invalid currency to ") @QueryParam("currencyto") String currencyTo,
-			@NotNull @Min(message = "the amount must be greater than 0",value = 0) @QueryParam("amount") BigDecimal amt  ) {
+			@NotNull @Min(message = "the amount must be greater than 0",value = 0) @QueryParam("amount") BigDecimal amt,@Context Request request  ) {
 		
 		log.log(Level.INFO,"Entering exchangeRate currency from {0} currency to {1} amt to exchage {3} ",new Object[]{currencyFrom,currencyTo,amt});
-		BigDecimal converted=null;
-		Exchange ex= null;
+		Exchange exchange=null;
+		
 		try {
-			converted=currencyManagement.convertToCurrencyByIsoCode(currencyFrom, currencyTo, amt, DEFAULT_SCALE);
+			exchange=currencyManagement.convertToCurrencyByIsoCode(currencyFrom, currencyTo, amt, DEFAULT_SCALE);
 			log.log(Level.INFO,"Rate found");
-			ex=new Exchange(currencyFrom,currencyTo,amt,converted);
+			
 			
 
 		} catch (CurrencyExchangeException e) {
@@ -75,13 +75,16 @@ public class ExchangeService {
 			return Response.status(Response.Status.NOT_FOUND).entity(NOT_FOUND).type(MediaType.TEXT_PLAIN).build();
 						
 		}
-				 
-		CacheControl cc = new CacheControl();
-		cc.setMaxAge(CACHE_TIME);
-		cc.setPrivate(true);
-		ResponseBuilder rb = Response.ok(ex);
-		rb.cacheControl(cc);
-				
+
+		ResponseBuilder rb = request.evaluatePreconditions(exchange.getValidFrom());
+		if(rb==null) {
+			log.log(Level.INFO,"Cache expire, getting a new one");
+			CacheControl cc = new CacheControl();
+			cc.setMaxAge(CACHE_TIME);
+			cc.setPrivate(true);
+			cc.setNoCache(false);
+			rb = Response.ok(exchange).lastModified(exchange.getValidFrom()).cacheControl(cc);
+		}
 		return rb.build();
 		
 		
