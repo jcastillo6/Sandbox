@@ -1,6 +1,8 @@
-package com.jcastillo.exchanger.rest;
+package com.jcastillo.exchanger.controller;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.ws.rs.core.Link;
 import javax.xml.bind.annotation.XmlElement;
@@ -15,7 +17,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *
  */
 @XmlRootElement
-public class Exchange {
+public class Exchange implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@XmlElement
 	private String currencyFrom;
 	@XmlElement
@@ -24,42 +30,39 @@ public class Exchange {
 	private BigDecimal amtFrom;
 	@XmlElement
 	private BigDecimal result;
+	private Date validFrom;
 	private Link reverseRate;
-
-	public Exchange(String currencyFrom, String currencyTo, BigDecimal amtFrom, BigDecimal result) {
+	
+	
+	public Exchange() {
+		super();
+	}
+	
+	public Exchange(String currencyFrom, String currencyTo, BigDecimal amtFrom, BigDecimal result,Date validFrom) {
 		super();
 		this.currencyFrom = currencyFrom;
 		this.currencyTo = currencyTo;
 		this.amtFrom = amtFrom;
 		this.result = result;
-	}
-	
-	public Exchange(String currencyFrom, String currencyTo, BigDecimal amtFrom) {
-		super();
-		this.currencyFrom = currencyFrom;
-		this.currencyTo = currencyTo;
-		this.amtFrom = amtFrom;
-
+		this.validFrom=validFrom;
 	}
 	
 
+	
 	@XmlElement(name="link")
 	@XmlJavaTypeAdapter(XmlAdapter.class)
 	public Link getReverseRateLink() {
 		reverseRate = Link.fromUri("/exchange?currencyfrom={currencyFrom}&currencyto={currencyto}&amtfrom={result}").rel("exchange").title("reverse").build(new Object[] {currencyTo,currencyFrom,result});
 		return reverseRate;
 	}
-	
-	public Exchange() {
-		super();
+
+	public Date getValidFrom() {
+		return validFrom;
 	}
-	
-	
-	
 
-
-
-
+	public void setValidFrom(Date validFrom) {
+		this.validFrom = validFrom;
+	}
 
 	public String getCurrencyFrom() {
 		return currencyFrom;
