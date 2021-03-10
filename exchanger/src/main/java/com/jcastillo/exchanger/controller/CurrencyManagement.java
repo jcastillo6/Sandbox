@@ -58,14 +58,14 @@ public class CurrencyManagement implements CurrencyManagementLocal {
 
 
 	@Override
-	public BigDecimal convertToCurrency(Currency currencyFrom, Currency currencyTo, BigDecimal amt,Integer scale) throws CurrencyExchangeException {
+	public Exchange convertToCurrency(Currency currencyFrom, Currency currencyTo, BigDecimal amt,Integer scale) throws CurrencyExchangeException {
 		
 		return convertToCurrencyByIsoCode(currencyFrom.getIsoCode(), currencyTo.getIsoCode(), amt,scale);
 		
 	}
 
 	@Override
-	public BigDecimal convertToCurrencyByIsoCode(String currencyFrom, String currencyTo, BigDecimal amt,Integer scale) throws CurrencyExchangeException {
+	public Exchange convertToCurrencyByIsoCode(String currencyFrom, String currencyTo, BigDecimal amt,Integer scale) throws CurrencyExchangeException {
 		BigDecimal amtResult=new BigDecimal(0);
 		ConversionRate rate=convRate.getConversionRateByIsoCode(currencyFrom, currencyTo).orElse(null);
 		if(rate==null) {
@@ -84,7 +84,9 @@ public class CurrencyManagement implements CurrencyManagementLocal {
 			throw new CurrencyExchangeException("Conversion rate not found");
 		}
 		
-		return amtResult.setScale((scale!=null)?scale:DEFAULT_SCALE,RoundingMode.HALF_UP );
+		Exchange exchange = new Exchange(currencyFrom, currencyTo,amt,amtResult.setScale((scale!=null)?scale:DEFAULT_SCALE,RoundingMode.HALF_UP ),rate.getValidFrom());
+		
+		return exchange;
 	}
 
 	@Override
