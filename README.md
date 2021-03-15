@@ -1,2 +1,2 @@
-# sanbox
+# sandbox
 Java EE sandbox
